@@ -4,10 +4,12 @@ A Q&A forum for the University of Maine School of Computing and Information Scie
 ## Getting Started
 Clone the repo and install dependencies:
 
+```bash
 git clone https://github.com/norus04/scis-hub.git
 cd scis-hub
 npm install
 npm start
+```
 
 The app will open at localhost:3000.
 
