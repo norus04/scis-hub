@@ -65,7 +65,7 @@ export default function BackNavbar() {
       {isOpen && (
         <div style={{ position: 'fixed', top: 53, right: 24, zIndex: 1000, boxSizing: 'border-box', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', padding: 8, width: 301, background: '#FFFFFF', border: '1px solid #D9D9D9', boxShadow: '0px 4px 4px -1px rgba(12, 12, 13, 0.1)', borderRadius: 8 }}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', padding: '8px 16px 4px', width: 285, height: 32 }}>
-            <span style={{ fontFamily: 'Teko', fontWeight: 400, fontSize: 24, lineHeight: '140%', color: '#222A35' }}>Menu Navigation</span>
+            <span style={{ fontFamily: 'Teko', fontWeight: 400, fontSize: 24, lineHeight: '140%', color: '#222A35' }}>SCIS Success Tips Menu</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '8px 16px', width: 285 }}>
             <div style={{ width: 253, height: 1, background: '#D9D9D9' }} />
