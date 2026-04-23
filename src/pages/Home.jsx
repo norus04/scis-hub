@@ -79,6 +79,7 @@ export default function Home() {
       {/* Posts */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         {MOCK_POSTS.map(post => (
+          
           <div key={post.id} style={{ border: '1px solid #e5e7eb', borderRadius: 8, padding: 16 }}>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
