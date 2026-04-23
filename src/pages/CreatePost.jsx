@@ -1,12 +1,43 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from '../context/AuthContext';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '../firebase';
 
 
 export default function CreatePost() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [postType, setPostType] = useState('question');
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [title, setTitle] = useState('')
+  const [details, setDetails] = useState('')
+  const [error, setError] = useState('')
+
+  async function handlePost() {
+    if (!title || !details || !selectedCategory) {
+        setError('Please fill in all fields and select a category.');
+        return;
+    }
+    try {
+        await addDoc(collection(db, 'posts'), {
+            type: postType,
+            category: selectedCategory,
+            title,
+            body: details,
+            author: user.email,
+            role: user.role,
+            upvotes: 0,
+            answers: 0,
+            resolved: false,
+            createdAt: serverTimestamp(),
+        });
+        navigate('/home');
+    }
+    catch(err) {
+        setError('Failed to create post. Please try again.');
+    }
+  }
 
     return (
         <div style={{boxSizing: 'border-box',
@@ -42,14 +73,14 @@ export default function CreatePost() {
                     <h3 style={{color: 'black', margin: 0, fontWeight: 400, fontSize: 24}}>Title</h3>
                     <p style={{color: '#AB0634', margin: 0, fontWeight: 400, fontSize: 24}}>*</p>
                 </div>               
-                <input style={{ border:'1px solid #777B82',borderRadius: 8, padding: 10,fontFamily: 'Familjen Grotesk, sans-serif', fontSize: 18, flexDirection: 'column', width:'100%', height: 36}}type="text" placeholder="e.g., How do I prepare for multiple midterms?" />              
+                <input style={{ border:'1px solid #777B82',borderRadius: 8, padding: 10,fontFamily: 'Familjen Grotesk, sans-serif', fontSize: 18, flexDirection: 'column', width:'100%', height: 36}}type="text" placeholder="e.g., How do I prepare for multiple midterms?" onChange={e => setTitle(e.target.value)}/>              
             </div>
             <div style={{gap: 0, margin: 0, marginTop: 25, padding: 0, display:'flex', flexDirection: 'column'}}>
                 <div style={{display:'flex',flexDirection: 'row'}}>
                     <h3 style={{color: 'black', margin: 0, fontWeight: 400, fontSize: 24}}>Question Details</h3>
                     <p style={{color: '#AB0634', margin: 0, fontWeight: 400, fontSize: 24}}>*</p>
                 </div>               
-                <textarea style={{ border:'1px solid #777B82',borderRadius: 8, padding: 10,fontFamily: 'Familjen Grotesk, sans-serif', fontSize: 18, flexDirection: 'column', width:'100%', height: 200}}type="text" placeholder="Describe your question in detail. What have you tried so far?" />              
+                <textarea style={{ border:'1px solid #777B82',borderRadius: 8, padding: 10,fontFamily: 'Familjen Grotesk, sans-serif', fontSize: 18, flexDirection: 'column', width:'100%', height: 200}}type="text" placeholder="Describe your question in detail. What have you tried so far?" onChange={e => setDetails(e.target.value)}/>              
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 25 }}>
                 <div style={{ display: 'flex', flexDirection: 'row', border: 0, borderRadius: 14, overflow: 'hidden', width: '90%', gap: 0, margin: '0 auto' }}>
@@ -60,11 +91,14 @@ export default function CreatePost() {
                     ))}
                 </div>
             </div>
+
+            {error && <p style={{ color: 'red', marginTop: 12 }}>{error}</p>}
+            
             <div style={{ display: 'flex', flexDirection: 'row', gap: 16, marginTop: 50, justifyContent: 'flex-end', margin: 'auto' }}>
-                <button style={{ padding: '10px 24px', borderRadius: 8, border: 'none', background: '#082E58', color: '#fff', fontFamily: 'Familjen Grotesk, sans-serif', fontSize: 20, cursor: 'pointer', width: 112}}>
+                <button onClick={handlePost} style={{ padding: '10px 24px', borderRadius: 8, border: 'none', background: '#082E58', color: '#fff', fontFamily: 'Familjen Grotesk, sans-serif', fontSize: 20, cursor: 'pointer', width: 112}}>
                     Post
                 </button>
-                <button style={{ padding: '10px 24px', borderRadius: 8, border: '2px solid #082E58', background: '#fff', color: '#082E58', fontFamily: 'Familjen Grotesk, sans-serif', fontSize: 20, cursor: 'pointer', width: 112 }}>
+                <button onClick={() => navigate('/home')} style={{ padding: '10px 24px', borderRadius: 8, border: '2px solid #082E58', background: '#fff', color: '#082E58', fontFamily: 'Familjen Grotesk, sans-serif', fontSize: 20, cursor: 'pointer', width: 112 }}>
                     Cancel
                 </button>
             </div>
