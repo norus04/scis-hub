@@ -1,12 +1,43 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from '../context/AuthContext';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '../firebase';
 
 
 export default function CreatePost() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [postType, setPostType] = useState('question');
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [title, setTitle] = useState('')
+  const [details, setDetails] = useState('')
+  const [error, setError] = useState('')
+
+  async function handlePost() {
+    if (!title || !details || !selectedCategory) {
+        setError('Please fill in all fields and select a category.');
+        return;
+    }
+    try {
+        await addDoc(collection(db, 'posts'), {
+            type: postType,
+            category: selectedCategory,
+            title,
+            body: details,
+            author: user.email,
+            role: user.role,
+            upvotes: 0,
+            answers: 0,
+            resolved: false,
+            createdAt: serverTimestamp(),
+        });
+        navigate('/home');
+    }
+    catch(err) {
+        setError('Failed to create post. Please try again.');
+    }
+  }
 
     return (
         <div style={{boxSizing: 'border-box',
@@ -60,11 +91,14 @@ export default function CreatePost() {
                     ))}
                 </div>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'row', gap: 16, marginTop: 25, justifyContent: 'center' }}>
-                <button style={{ padding: '10px 24px', borderRadius: 8, border: 'none', background: '#082E58', color: '#fff', fontFamily: 'Familjen Grotesk, sans-serif', fontSize: 20, cursor: 'pointer', width: 112}}>
+
+            {error && <p style={{ color: 'red', marginTop: 12 }}>{error}</p>}
+            
+            <div style={{ display: 'flex', flexDirection: 'row', gap: 16, marginTop: 50, justifyContent: 'flex-end', margin: 'auto' }}>
+                <button onClick={handlePost} style={{ padding: '10px 24px', borderRadius: 8, border: 'none', background: '#082E58', color: '#fff', fontFamily: 'Familjen Grotesk, sans-serif', fontSize: 20, cursor: 'pointer', width: 112}}>
                     Post
                 </button>
-                <button style={{ padding: '10px 24px', borderRadius: 8, border: '2px solid #082E58', background: '#fff', color: '#082E58', fontFamily: 'Familjen Grotesk, sans-serif', fontSize: 20, cursor: 'pointer', width: 112 }}>
+                <button onClick={() => navigate('/home')} style={{ padding: '10px 24px', borderRadius: 8, border: '2px solid #082E58', background: '#fff', color: '#082E58', fontFamily: 'Familjen Grotesk, sans-serif', fontSize: 20, cursor: 'pointer', width: 112 }}>
                     Cancel
                 </button>
             </div>
