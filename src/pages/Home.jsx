@@ -1,4 +1,5 @@
 import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const MOCK_POSTS = [
   {
@@ -41,6 +42,7 @@ const MOCK_POSTS = [
 
 export default function Home() {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <div style={{ maxWidth: 800, margin: '0 auto' }}>
@@ -61,7 +63,7 @@ export default function Home() {
             </span>
           )}
         </div>
-        <button style={{ padding: '8px 16px', background: '#000', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer' }}>
+        <button onClick={() => navigate('/create-post')} style={{ padding: '8px 16px', background: '#000', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer' }}>
           + New Post
         </button>
       </div>
