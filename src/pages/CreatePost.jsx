@@ -5,23 +5,69 @@ import { useAuth } from '../context/AuthContext';
 
 export default function CreatePost() {
   const { user } = useAuth();
+  const [postType, setPostType] = useState('question');
+  const [selectedCategory, setSelectedCategory] = useState(null);
+
     return (
         <div style={{boxSizing: 'border-box',
                     display: 'flex',
                     flexDirection: 'column',
-                    alignitems: 'flex-start',
-                    padding: "32px 0px 32px 32px",
-                    gap: "48px",
-                    position: 'absolute',
-                    width: "864px",                        height: "780px",
-                    left: 'calc(50% - 864/2)',
-                    top: 'calc(50% - 780/2 + 17)',
+                    margin: '0 auto',
+                    width: "40vw",                       
+                    
+                    padding: '50px 50px 32px 50px',
                     background: "#EDEEF1", 
-                    borderRadius: 14,}}>
-            <h1 style={{}}>Create A New Post</h1>
-            <h2>What would you like to share?</h2>
-            <button>Ask a Question</button>
-            <button>Share a Tip</button>
+                    borderRadius: 14,
+                    fontFamily: 'teko',
+                    
+                   }}>
+            <h1 style={{ fontWeight: 400, fontSize: 40, margin: '0 auto'}}>Create A New Post</h1>
+            <h2 style={{ fontWeight: 400, fontSize: 24}}>What would you like to share?</h2>
+            <div style={{display: "flex",fontWeight: 400, flexDirection:'row', gap: 16}}>
+                <button onClick={() => setPostType('question')} style={{background: postType === 'question' ? '#D6ECFA' : '#fff', fontFamily: 'teko', border: '2px solid #082E58', borderRadius: 10, textAlign: 'left', fontSize: 24, margin: 0, height: '80px', width: '50%', verticalAlign: 'middle'}}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 0, lineHeight: 1, padding: 10 }}>
+                    <span>Ask a Question</span>
+                    <p style={{ fontFamily: 'Familjen Grotesk, sans-serif', fontSize: 18, color: '#353D4A', margin: 0 }}>Get help from the community</p>
+                  </div>
+                </button>
+                <button onClick={() => setPostType('tip')} style={{background: postType === 'tip' ? '#D6ECFA' : '#fff', fontFamily: 'teko', border: '2px solid #082E58', borderRadius: 10, textAlign: 'left', fontSize: 24, margin: 0, height: '80px', width: '50%', verticalAlign: 'middle'}}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 0, lineHeight: 1, padding: 10 }}>
+                    <span>Share a Tip</span>
+                    <p style={{ fontFamily: 'Familjen Grotesk, sans-serif', fontSize: 18, color: '#353D4A', margin: 0 }}>Help others with your advice</p>
+                  </div>
+                </button>
+            </div>
+            <div style={{gap: 0, margin: 0, marginTop: 25, padding: 0, display:'flex', flexDirection: 'column'}}>
+                <div style={{display:'flex',flexDirection: 'row'}}>
+                    <h3 style={{color: 'black', margin: 0, fontWeight: 400, fontSize: 24}}>Title</h3>
+                    <p style={{color: '#AB0634', margin: 0, fontWeight: 400, fontSize: 24}}>*</p>
+                </div>               
+                <input style={{ border:'1px solid #777B82',borderRadius: 8, padding: 10,fontFamily: 'Familjen Grotesk, sans-serif', fontSize: 18, flexDirection: 'column', width:'100%', height: 36}}type="text" placeholder="e.g., How do I prepare for multiple midterms?" />              
+            </div>
+            <div style={{gap: 0, margin: 0, marginTop: 25, padding: 0, display:'flex', flexDirection: 'column'}}>
+                <div style={{display:'flex',flexDirection: 'row'}}>
+                    <h3 style={{color: 'black', margin: 0, fontWeight: 400, fontSize: 24}}>Question Details</h3>
+                    <p style={{color: '#AB0634', margin: 0, fontWeight: 400, fontSize: 24}}>*</p>
+                </div>               
+                <textarea style={{ border:'1px solid #777B82',borderRadius: 8, padding: 10,fontFamily: 'Familjen Grotesk, sans-serif', fontSize: 18, flexDirection: 'column', width:'100%', height: 200}}type="text" placeholder="Describe your question in detail. What have you tried so far?" />              
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 25 }}>
+                <div style={{ display: 'flex', flexDirection: 'row', border: 0, borderRadius: 14, overflow: 'hidden', width: '90%', gap: 0, margin: '0 auto' }}>
+                    {['Study Tips', 'Time Management', 'Resources', 'Exam Prep', 'Motivation', 'Questions'].map((cat, i, arr) => (
+                    <button key={cat} onClick={() => setSelectedCategory(cat)} style={{margin: 0, flex: 1, padding: '8px 0', background: selectedCategory === cat ? '#D6ECFA' : '#fff', fontFamily: 'teko', fontSize: 20, cursor: 'pointer', border: 0, outline: 'none', display: 'block' }}>
+                        {cat}
+                    </button>
+                    ))}
+                </div>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'row', gap: 16, marginTop: 50, justifyContent: 'flex-end', margin: 'auto' }}>
+                <button style={{ padding: '10px 24px', borderRadius: 8, border: 'none', background: '#082E58', color: '#fff', fontFamily: 'Familjen Grotesk, sans-serif', fontSize: 20, cursor: 'pointer', width: 112}}>
+                    Post
+                </button>
+                <button style={{ padding: '10px 24px', borderRadius: 8, border: '2px solid #082E58', background: '#fff', color: '#082E58', fontFamily: 'Familjen Grotesk, sans-serif', fontSize: 20, cursor: 'pointer', width: 112 }}>
+                    Cancel
+                </button>
+            </div>
         </div>
     );
 }
