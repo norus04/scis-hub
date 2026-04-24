@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { collection, getDocs, orderBy, query } from 'firebase/firestore';
+import { collection, orderBy, query, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase';
 
 export default function Home() {
@@ -14,19 +14,15 @@ export default function Home() {
 
 
   useEffect(() => {
-    async function fetchPosts() {
-      try {
-        const q = query(collection(db, 'posts'), orderBy('createdAt', 'desc'));
-        const snapshot = await getDocs(q);
-        const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        setPosts(data);
-      } catch (err) {
-        console.error('Failed to fetch posts:', err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchPosts();
+    const q = query(collection(db, 'posts'), orderBy('createdAt', 'desc'));
+    const unsub = onSnapshot(q, snap => {
+      setPosts(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+      setLoading(false);
+    }, err => {
+      console.error('Failed to fetch posts:', err);
+      setLoading(false);
+    });
+    return () => unsub();
   }, []);
 
   return (
@@ -89,7 +85,7 @@ export default function Home() {
               (post.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
                post.body?.toLowerCase().includes(searchQuery.toLowerCase()))
             ).map(post => (
-              <div key={post.id} onClick={() => navigate(`/post/${post.id}`)} style={{ border: '1px solid #e5e7eb', borderRadius: 14, padding: 16, background: '#fff', cursor: 'pointer' }}>
+              <div key={post.id} onClick={() => navigate(`/Post/${post.id}`)} style={{ border: '1px solid #e5e7eb', borderRadius: 14, padding: 16, background: '#fff', cursor: 'pointer' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
                   <img src={post.type === 'tip' ? '/images/Icon_Lightbulb.png' : '/images/Open-Book.png'} alt={post.type} style={{ width: 16, height: 16 }}/>
                   <span style={{fontFamily: 'teko', fontSize: 15, color: '#555' }}>{post.category}</span>
@@ -102,7 +98,10 @@ export default function Home() {
                 <h3 style={{fontFamily: 'teko', fontSize: 24, margin: '0 0 8px', fontWeight: 400 }}>{post.title}</h3>
                 <p style={{fontFamily:'Familjen Grotesk, sans-serif', fontSize: 14, margin: '0 0 12px', color: '#444', fontSize: 14 }}>{post.body}</p>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginRight: 5, flexDirection: 'row' }}>
-                  <span style={{fontFamily:'Familjen Grotesk, sans-serif', fontSize: 14, color: '#716f6f' }}>{post.author}</span>
+                  <span style={{fontFamily:'Familjen Grotesk, sans-serif', fontSize: 14, color: '#716f6f', display: 'flex', gap: 10}}>
+                    <span>{post.author}</span>
+                    <span>{post.createdAt?.toDate?.().toLocaleDateString()}</span>
+                    </span>
                   <span style={{fontFamily:'Familjen Grotesk, sans-serif', fontSize: 14, color: '#716f6f', display: 'flex', gap: 16}}>
                     <span><img src="/images/View_Arrow.png" alt="" style={{ verticalAlign: 'middle' }} /> {post.upvotes}</span>
                     <span style={{}}>{post.answers} answers</span>
