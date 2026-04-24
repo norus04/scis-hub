@@ -52,6 +52,10 @@ export default function CreatePost() {
                     borderRadius: 14,
                     fontFamily: 'teko',
                    }}>
+            <h1 style={{ fontWeight: 400, fontSize: 40, margin: '0 auto'}}>Create A New Post</h1>
+            <h2 style={{ fontWeight: 400, fontSize: 24}}>What would you like to share?</h2>
+            <div style={{display: "flex",fontWeight: 400, flexDirection:'row', gap: 16}}>
+                <button onClick={() => setPostType('question')} style={{cursor: 'pointer', background: postType === 'question' ? '#D6ECFA' : '#fff', fontFamily: 'teko', border: '2px solid #082E58', borderRadius: 10, textAlign: 'left', fontSize: 24, margin: 0, height: '80px', width: '50%', verticalAlign: 'middle'}}>
             <h1 style={{ fontWeight: 400, fontSize: 'clamp(24px, 4vw, 40px)', margin: '0 auto'}}>Create A New Post</h1>
             <h2 style={{ fontWeight: 400, fontSize: 'clamp(16px, 2.5vw, 24px)'}}>What would you like to share?</h2>
             <div style={{display: "flex", fontWeight: 400, flexDirection:'row', gap: 'clamp(8px, 2vw, 16px)'}}>
@@ -61,6 +65,7 @@ export default function CreatePost() {
                     <p style={{ fontFamily: 'Familjen Grotesk, sans-serif', fontSize: 'clamp(12px, 1.5vw, 18px)', color: '#353D4A', margin: 0 }}>Get help from the community</p>
                   </div>
                 </button>
+                <button onClick={() => setPostType('tip')} style={{cursor: 'pointer', background: postType === 'tip' ? '#D6ECFA' : '#fff', fontFamily: 'teko', border: '2px solid #082E58', borderRadius: 10, textAlign: 'left', fontSize: 24, margin: 0, height: '80px', width: '50%', verticalAlign: 'middle'}}>
                 <button onClick={() => setPostType('tip')} style={{background: postType === 'tip' ? '#D6ECFA' : '#fff', fontFamily: 'teko', border: '2px solid #082E58', borderRadius: 10, textAlign: 'left', fontSize: 'clamp(16px, 2vw, 24px)', margin: 0, height: '80px', width: '50%', verticalAlign: 'middle'}}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 0, lineHeight: 1, padding: 10 }}>
                     <span>Share a Tip</span>
