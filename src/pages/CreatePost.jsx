@@ -94,7 +94,7 @@ export default function CreatePost() {
 
             {error && <p style={{ color: 'red', marginTop: 12 }}>{error}</p>}
             
-            <div style={{ display: 'flex', flexDirection: 'row', gap: 16, marginTop: 50, justifyContent: 'flex-end', margin: 'auto' }}>
+            <div style={{ display: 'flex', flexDirection: 'row', gap: 16, paddingTop: 50, justifyContent: 'flex-end', margin: 'auto' }}>
                 <button onClick={handlePost} style={{ padding: '10px 24px', borderRadius: 8, border: 'none', background: '#082E58', color: '#fff', fontFamily: 'Familjen Grotesk, sans-serif', fontSize: 20, cursor: 'pointer', width: 112}}>
                     Post
                 </button>

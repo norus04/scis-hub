@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { doc, getDoc, collection, addDoc, updateDoc, increment, serverTimestamp, orderBy, query, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useAuth } from '../context/AuthContext';
+import mockAiResponses from '../data/mockAiResponses.json';
 
 export default function Post() {
   const { id } = useParams();
@@ -12,6 +13,9 @@ export default function Post() {
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [aiDraft, setAiDraft] = useState('');
+  const [aiApproved, setAiApproved] = useState(0);
+  const [aiRejected, setAiRejected] = useState(0);
 
   useEffect(() => {
     async function fetchPost() {
@@ -80,13 +84,40 @@ export default function Post() {
                 <h2 style={{fontFamily: 'teko', color: '#082E58', fontSize: 24, fontWeight: 400, margin: 0}}>Need Help Answering?</h2>
                 <p style={{fontFamily: 'Familjen Grotesk, sans-serif', fontSize: 18, margin: 0, color:'#4A5565'}}>Let AI draft an answer that the community can verify</p>
             </div>
-            <button style={{cursor: 'pointer', height: 36, fontFamily: 'teko', fontSize: 20, fontWeight: 400, display:'flex', flexDirection: 'row', alignItems: 'center', color: '#fff', background: 'linear-gradient(to right, #2B7FFF, #AD46FF)', border: '0', borderRadius: 8, marginLeft: 'auto'}}>
+            <button onClick={() => setAiDraft(mockAiResponses[Math.floor(Math.random() * mockAiResponses.length)])} style={{cursor: 'pointer', height: 36, fontFamily: 'teko', fontSize: 20, fontWeight: 400, display:'flex', flexDirection: 'row', alignItems: 'center', color: '#fff', background: 'linear-gradient(to right, #2B7FFF, #AD46FF)', border: '0', borderRadius: 8, marginLeft: 'auto'}}>
                 <img style={{marginLeft: 12}} src="/images/AI_icon.png" alt=""/>
                 <span style={{padding: 20}}>Generate AI Answer</span>
             </button>
         </div>
-       
+
         <span style={{fontFamily: 'teko', fontSize: 24, margin: 24}}>{comments.length} Answers</span>
+
+          {aiDraft && (
+            <div style={{ width: '95%', margin: 'auto', marginTop: 25, marginBottom: 25, padding: '16px 20px', background: 'linear-gradient(to bottom, #EFF6FF, #FAF5FF)', border: '1px solid #A8D6F3', borderRadius: 14, display: 'flex', flexDirection: 'row'}}>
+              <img style={{width: 40, height: 40, marginRight: 10 }} src="/images/Ai-PFP.png" alt="" />
+              <div style={{flexDirection: 'column'}}>
+                <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                  <p style={{fontFamily: 'teko', fontSize: 24, color: '#000', margin: '0 0 8px' }}>AI Study Assistant</p>
+                  <p style={{fontFamily: 'Familjen Grotesk, sans-serif', fontSize: 14, marginLeft: 20, height: 20, background: 'linear-gradient(to bottom, #2B7FFF, #AD46FF)', color:'#fff', alignItems: 'center', border: '1px solid #082E58', borderRadius: 8, padding: '0px 10px', verticalAlign: 'middle'}}><img style={{marginRight: 10}} src='/images/AI_Icon.png'></img>AI Generated</p>
+                  <p style={{fontFamily: 'Familjen Grotesk, sans-serif', fontSize: 14,  marginLeft: 15, height: 20, background: '#F8D6DD', color:'#2A0110', border: '1px solid #8F052C', borderRadius: 8, padding: '0px 10px'}}>Unverified</p>
+                </div>
+                <div style={{background: '#D6ECFA', border: '1px solid #79BDE8', borderRadius: 10, padding: 13, display: 'flex', flexDirection: 'row'}}>
+                  <img style={{width: 20, height: 20}} src="/images/AI_Warning.png" alt="" />
+                  <div style={{display: 'flex', flexDirection: 'column', margin: 0, marginLeft: 10, gap: 4, justifyContent: 'flex-start'}}>
+                    <h3 style={{fontFamily: 'Familjen Grotesk, sans-serif', fontSize: 18, lineHeight: 1, margin: 0, color: '#082E58', fontWeight: 400}}>Needs Community Verification</h3>
+                    <p style={{fontFamily: 'Familjen Grotesk, sans-serif', fontSize: 14, lineHeight: 1, margin: 0, color: '#0B3A6E'}}>This AI-generated answer should be reviewed by students, TAs, or staff. Help improve accuracy by verifying, adding sources, or suggesting corrections.</p>
+                    <p style={{ fontFamily: 'Familjen Grotesk, sans-serif', fontSize: 14, margin: 0, lineHeight: 1, color: '#0B3A6E' }}>
+                      <span style={{fontWeight: 'bold'}}>Status:</span> <span>{aiApproved} approved</span>, <span >{aiRejected} rejected</span> ({aiApproved + aiRejected} total reviews)
+                    </p>
+                  </div>
+                </div>
+                <p style={{ fontFamily: 'Familjen Grotesk, sans-serif', fontSize: 15, color: '#444', margin: '0 0 12px', lineHeight: 1.6, whiteSpace: 'pre-line'}}>{aiDraft}</p>
+                <button onClick={() => setCommentText(aiDraft)} style={{display: 'flex', fontFamily: 'Familjen Grotesk, sans-serif', fontSize: 14,  padding: '6px 12px', background: '#082E58', color: '#fff', border: 0, borderRadius: 6, cursor: 'pointer', marginLeft: 'auto', marginTop: 50 }}>
+                  Confirm Answer
+                </button>
+              </div>
+            </div>
+          )}
 
          {comments.length > 0 && (
               <div style={{ margin: '0px 24px 15px', display: 'flex', flexDirection: 'column', gap: 16,  display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -111,7 +142,7 @@ export default function Post() {
             )}
 
         <div style={{ width: '95%', margin: ' auto', background: '#fff', padding: 25, border: '1px solid #C9CBD0', borderRadius: 14, display: 'flex', flexDirection: 'column'}}>
-            <h3 style={{fontFamily: 'teko', fontSize: 24, fontWeight: 400, margin: 0}}>Your Answer</h3>
+            <h4 style={{fontFamily: 'teko', fontSize: 24, fontWeight: 400, margin: 0}}>Your Answer</h4>
             <p style={{fontFamily: 'Familjen Grotesk, sans-serif', fontSize: 16, margin: 0}}>Write a helpful answer based on your experience</p>
             <textarea value={commentText} onChange={e => setCommentText(e.target.value)} style={{fontFamily: 'Familjen Grotesk, sans-serif', fontSize: 16, marginTop: 30, padding: 20, background: '#F3F3F5', border: 0, borderRadius: 8, height: 120}} placeholder='Share your knowledge or advice...' />
             <button onClick={handleSubmitComment} disabled={submitting} style={{fontFamily: 'Familjen Grotesk, sans-serif', fontSize: 14, marginTop: 30, marginLeft:'auto', padding: '10px 15px', color: '#fff', background: '#082E58', border: 0, borderRadius: 8, cursor: 'pointer'}}>
