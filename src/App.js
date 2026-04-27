@@ -7,7 +7,7 @@ import Register from './pages/auth/Register';
 import Home from './pages/Home';
 import Profile from './pages/Profile';
 import CreatePost from './pages/CreatePost';
-
+import Post from './pages/Post';
 export default function App() {
   return (
     <Router>
@@ -19,14 +19,8 @@ export default function App() {
           <Route path="/sign-in" element={<SignIn />} />
 
           {/* With back navbar */}
-          <Route path="/create-post" element={
-            <>
-              <BackNavbar />
-              <main style={{ padding: 24 }}>
-                <CreatePost />
-              </main>
-            </>
-          } />
+          <Route path="/create-post" element={<><BackNavbar /><main style={{ padding: 24 }}><CreatePost /></main></>} />
+          <Route path="/post/:id" element={<><BackNavbar /><main style={{ padding: 24 }}><Post /></main></>} />
 
           {/* With main navbar */}
           <Route path="/*" element={
